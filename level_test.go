@@ -4,7 +4,10 @@
 
 package logging
 
-import "testing"
+import (
+	"sync"
+	"testing"
+)
 
 func TestLevelString(t *testing.T) {
 	// Make sure all levels can be converted from string -> constant -> string
@@ -73,4 +76,25 @@ func TestLevelModuleLevel(t *testing.T) {
 			t.Errorf("unexpected level in %s: %s != %s", e.module, e.level, actual)
 		}
 	}
+}
+
+// This test should pass with -race.
+func TestLevelRace(t *testing.T) {
+	backend := NewMemoryBackend(128)
+
+	leveled := AddModuleLevel(backend)
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		leveled.SetLevel(INFO, "l1")
+	}()
+	go func() {
+		defer wg.Done()
+		leveled.SetLevel(INFO, "l2")
+	}()
+
+	wg.Wait()
 }
