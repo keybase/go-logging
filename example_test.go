@@ -6,7 +6,7 @@ func Example() {
 	// This call is for testing purposes and will set the time to unix epoch.
 	InitForTesting(DEBUG)
 
-	var log = MustGetLogger("example")
+	log := MustGetLogger("example")
 
 	// For demo purposes, create two backend for os.Stdout.
 	//
@@ -18,7 +18,7 @@ func Example() {
 	// For messages written to backend2 we want to add some additional
 	// information to the output, including the used log level and the name of
 	// the function.
-	var format = MustStringFormatter(
+	format := MustStringFormatter(
 		`%{time:15:04:05.000} %{shortfunc} %{level:.1s} %{message}`,
 	)
 	backend2Formatter := NewBackendFormatter(backend2, format)

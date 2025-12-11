@@ -47,11 +47,12 @@ func colorSeqBold(color color) string {
 }
 
 func doFmtVerbLevelColor(layout string, level Level, output io.Writer) {
-	if layout == "bold" {
+	switch layout {
+	case "bold":
 		_, _ = output.Write([]byte(boldcolors[level]))
-	} else if layout == "reset" {
+	case "reset":
 		_, _ = output.Write([]byte("\033[0m"))
-	} else {
+	default:
 		_, _ = output.Write([]byte(colors[level]))
 	}
 }
