@@ -105,7 +105,7 @@ type Formatter interface {
 	Format(calldepth int, r *Record, w io.Writer) error
 }
 
-// formatter is used by all backends unless otherwise overriden.
+// formatter is used by all backends unless otherwise overridden.
 var formatter struct {
 	sync.RWMutex
 	def Formatter
@@ -199,7 +199,7 @@ type stringFormatter struct {
 //	%{shortfunc} Base function name, eg. PutUint32
 //	%{callpath}  Call function path, eg. main.a.b.c
 func NewStringFormatter(format string) (Formatter, error) {
-	var fmter = &stringFormatter{}
+	fmter := &stringFormatter{}
 
 	// Find the boundaries of all %{vars}
 	matches := formatRe.FindAllStringSubmatchIndex(format, -1)
@@ -273,21 +273,22 @@ func (f *stringFormatter) add(verb fmtVerb, layout string) {
 	f.parts = append(f.parts, part{verb, layout})
 }
 
-func (f *stringFormatter) Format(calldepth int, r *Record, output io.Writer) error {
+func (f *stringFormatter) Format(calldepth int, r *Record, output io.Writer) (err error) {
 	for _, part := range f.parts {
-		if part.verb == fmtVerbStatic {
+		switch part.verb {
+		case fmtVerbStatic:
 			_, _ = output.Write([]byte(part.layout))
-		} else if part.verb == fmtVerbTime {
+		case fmtVerbTime:
 			_, _ = output.Write([]byte(r.Time.Format(part.layout)))
-		} else if part.verb == fmtVerbLevelColor {
+		case fmtVerbLevelColor:
 			doFmtVerbLevelColor(part.layout, r.Level, output)
-		} else if part.verb == fmtVerbCallpath {
+		case fmtVerbCallpath:
 			depth, err := strconv.Atoi(part.layout)
 			if err != nil {
 				depth = 0
 			}
 			_, _ = output.Write([]byte(formatCallpath(calldepth+1, depth)))
-		} else {
+		default:
 			var v interface{}
 			switch part.verb {
 			case fmtVerbLevel:
@@ -323,7 +324,10 @@ func (f *stringFormatter) Format(calldepth int, r *Record, output io.Writer) err
 			default:
 				panic("unhandled format part")
 			}
-			fmt.Fprintf(output, part.layout, v)
+			_, err = fmt.Fprintf(output, part.layout, v)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -396,7 +400,7 @@ type backendFormatter struct {
 }
 
 // NewBackendFormatter creates a new backend which makes all records that
-// passes through it beeing formatted by the specific formatter.
+// passes through it being formatted by the specific formatter.
 func NewBackendFormatter(b Backend, f Formatter) Backend {
 	return &backendFormatter{b, f}
 }

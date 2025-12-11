@@ -13,8 +13,7 @@ import (
 
 type Priority int
 
-type SyslogBackend struct {
-}
+type SyslogBackend struct{}
 
 func NewSyslogBackend(prefix string) (b *SyslogBackend, err error) {
 	return nil, fmt.Errorf("Platform does not support syslog")

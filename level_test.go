@@ -37,9 +37,8 @@ func TestLevelLogLevel(t *testing.T) {
 		if err != nil {
 			if test.expected == -1 {
 				continue
-			} else {
-				t.Errorf("failed to convert %s: %s", test.level, err)
 			}
+			t.Errorf("failed to convert %s: %s", test.level, err)
 		}
 		if test.expected != level {
 			t.Errorf("failed to convert %s to level: %s != %s", test.level, test.expected, level)

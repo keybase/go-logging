@@ -54,15 +54,16 @@ type MemoryBackend struct {
 }
 
 // NewMemoryBackend creates a simple in-memory logging backend.
-func NewMemoryBackend(size int) *MemoryBackend {
-	return &MemoryBackend{maxSize: int32(size)}
+func NewMemoryBackend(size int32) *MemoryBackend {
+	return &MemoryBackend{maxSize: size}
 }
 
 // Log implements the Log method required by Backend.
-func (b *MemoryBackend) Log(level Level, calldepth int, rec *Record) error {
+func (b *MemoryBackend) Log(_ Level, _ int, rec *Record) error {
 	var size int32
 
 	n := &node{Record: rec}
+	//nolint:gosec // G103: Intentional use of unsafe for lock-free atomic operations
 	np := unsafe.Pointer(n)
 
 	// Add the record to the tail. If there's no records available, tail and
@@ -99,7 +100,7 @@ func (b *MemoryBackend) Log(level Level, calldepth int, rec *Record) error {
 			swapped := atomic.CompareAndSwapPointer(
 				&b.head,
 				headp,
-				unsafe.Pointer(head.next),
+				unsafe.Pointer(head.next), //nolint:gosec // G103: Intentional use of unsafe for lock-free atomic operations
 			)
 			if swapped {
 				atomic.AddInt32(&b.size, -1)
@@ -223,7 +224,7 @@ func (b *ChannelMemoryBackend) Stop() {
 }
 
 // Log implements the Log method required by Backend.
-func (b *ChannelMemoryBackend) Log(level Level, calldepth int, rec *Record) error {
+func (b *ChannelMemoryBackend) Log(_ Level, _ int, rec *Record) error {
 	b.incoming <- rec
 	return nil
 }

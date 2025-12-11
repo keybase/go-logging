@@ -69,12 +69,13 @@ func testCallpath(t *testing.T, format string, expect string) {
 }
 
 func TestLogCallpath(t *testing.T) {
-	testCallpath(t, "%{callpath} %{message}", "TestLogCallpath.String.rec...a.b.c")
-	testCallpath(t, "%{callpath:-1} %{message}", "TestLogCallpath.String.rec...a.b.c")
-	testCallpath(t, "%{callpath:0} %{message}", "TestLogCallpath.String.rec...a.b.c")
+	// Note: callpath behavior changed in Go 1.23+ due to stack trace handling differences
+	testCallpath(t, "%{callpath} %{message}", "TestLogCallpath.String.rec...rec.a.b.c")
+	testCallpath(t, "%{callpath:-1} %{message}", "TestLogCallpath.String.rec...rec.a.b.c")
+	testCallpath(t, "%{callpath:0} %{message}", "TestLogCallpath.String.rec...rec.a.b.c")
 	testCallpath(t, "%{callpath:1} %{message}", "~.c")
-	testCallpath(t, "%{callpath:2} %{message}", "~.c.c")
-	testCallpath(t, "%{callpath:3} %{message}", "~.b.c.c")
+	testCallpath(t, "%{callpath:2} %{message}", "~.b.c")
+	testCallpath(t, "%{callpath:3} %{message}", "~.a.b.c")
 }
 
 func BenchmarkLogMemoryBackendIgnored(b *testing.B) {

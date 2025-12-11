@@ -45,7 +45,7 @@ func TestMemoryBackend(t *testing.T) {
 
 	log := MustGetLogger("test")
 
-	if nil != MemoryRecordN(backend, 0) || 0 != backend.size {
+	if nil != MemoryRecordN(backend, 0) || backend.size != 0 {
 		t.Errorf("memory level: %d", backend.size)
 	}
 
@@ -54,11 +54,11 @@ func TestMemoryBackend(t *testing.T) {
 		log.Infof("%d", i)
 	}
 
-	if 8 != backend.size {
+	if backend.size != 8 {
 		t.Errorf("record length: %d", backend.size)
 	}
 	record := MemoryRecordN(backend, 0)
-	if "5" != record.Formatted(0) {
+	if record.Formatted(0) != "5" {
 		t.Errorf("unexpected start: %s", record.Formatted(0))
 	}
 	for i := 0; i < 8; i++ {
@@ -68,7 +68,7 @@ func TestMemoryBackend(t *testing.T) {
 		}
 	}
 	record = MemoryRecordN(backend, 7)
-	if "12" != record.Formatted(0) {
+	if record.Formatted(0) != "12" {
 		t.Errorf("unexpected end: %s", record.Formatted(0))
 	}
 	record = MemoryRecordN(backend, 8)
@@ -83,7 +83,7 @@ func TestChannelMemoryBackend(t *testing.T) {
 
 	log := MustGetLogger("test")
 
-	if nil != ChannelMemoryRecordN(backend, 0) || 0 != backend.size {
+	if nil != ChannelMemoryRecordN(backend, 0) || backend.size != 0 {
 		t.Errorf("memory level: %d", backend.size)
 	}
 
@@ -93,11 +93,11 @@ func TestChannelMemoryBackend(t *testing.T) {
 	}
 	backend.Flush()
 
-	if 8 != backend.size {
+	if backend.size != 8 {
 		t.Errorf("record length: %d", backend.size)
 	}
 	record := ChannelMemoryRecordN(backend, 0)
-	if "5" != record.Formatted(0) {
+	if record.Formatted(0) != "5" {
 		t.Errorf("unexpected start: %s", record.Formatted(0))
 	}
 	for i := 0; i < 8; i++ {
@@ -107,7 +107,7 @@ func TestChannelMemoryBackend(t *testing.T) {
 		}
 	}
 	record = ChannelMemoryRecordN(backend, 7)
-	if "12" != record.Formatted(0) {
+	if record.Formatted(0) != "12" {
 		t.Errorf("unexpected end: %s", record.Formatted(0))
 	}
 	record = ChannelMemoryRecordN(backend, 8)
