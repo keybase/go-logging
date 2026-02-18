@@ -8,7 +8,7 @@ import "testing"
 
 type Password string
 
-func (p Password) Redacted() interface{} {
+func (p Password) Redacted() any {
 	return Redact(string(p))
 }
 

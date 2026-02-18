@@ -21,7 +21,7 @@ import (
 // (like passwords), which shouldn't be printed to the log. The idea was found
 // in relog as part of the vitness project.
 type Redactor interface {
-	Redacted() interface{}
+	Redacted() any
 }
 
 // Redact returns a string of * having the same length as s.
@@ -45,7 +45,7 @@ type Record struct {
 	Time   time.Time
 	Module string
 	Level  Level
-	Args   []interface{}
+	Args   []any
 
 	// message is kept as a pointer to have shallow copies update this once
 	// needed.
@@ -140,7 +140,7 @@ func (l *Logger) IsEnabledFor(level Level) bool {
 	return defaultBackend.IsEnabledFor(level, l.Module)
 }
 
-func (l *Logger) log(lvl Level, format *string, args ...interface{}) {
+func (l *Logger) log(lvl Level, format *string, args ...any) {
 	if !l.IsEnabledFor(lvl) {
 		return
 	}
@@ -173,86 +173,86 @@ func (l *Logger) log(lvl Level, format *string, args ...interface{}) {
 }
 
 // Fatal is equivalent to l.Critical(fmt.Sprint()) followed by a call to os.Exit(1).
-func (l *Logger) Fatal(args ...interface{}) {
+func (l *Logger) Fatal(args ...any) {
 	l.log(CRITICAL, nil, args...)
 	os.Exit(1)
 }
 
 // Fatalf is equivalent to l.Critical followed by a call to os.Exit(1).
-func (l *Logger) Fatalf(format string, args ...interface{}) {
+func (l *Logger) Fatalf(format string, args ...any) {
 	l.log(CRITICAL, &format, args...)
 	os.Exit(1)
 }
 
 // Panic is equivalent to l.Critical(fmt.Sprint()) followed by a call to panic().
-func (l *Logger) Panic(args ...interface{}) {
+func (l *Logger) Panic(args ...any) {
 	l.log(CRITICAL, nil, args...)
 	panic(fmt.Sprint(args...))
 }
 
 // Panicf is equivalent to l.Critical followed by a call to panic().
-func (l *Logger) Panicf(format string, args ...interface{}) {
+func (l *Logger) Panicf(format string, args ...any) {
 	l.log(CRITICAL, &format, args...)
 	panic(fmt.Sprintf(format, args...))
 }
 
 // Critical logs a message using CRITICAL as log level.
-func (l *Logger) Critical(args ...interface{}) {
+func (l *Logger) Critical(args ...any) {
 	l.log(CRITICAL, nil, args...)
 }
 
 // Criticalf logs a message using CRITICAL as log level.
-func (l *Logger) Criticalf(format string, args ...interface{}) {
+func (l *Logger) Criticalf(format string, args ...any) {
 	l.log(CRITICAL, &format, args...)
 }
 
 // Error logs a message using ERROR as log level.
-func (l *Logger) Error(args ...interface{}) {
+func (l *Logger) Error(args ...any) {
 	l.log(ERROR, nil, args...)
 }
 
 // Errorf logs a message using ERROR as log level.
-func (l *Logger) Errorf(format string, args ...interface{}) {
+func (l *Logger) Errorf(format string, args ...any) {
 	l.log(ERROR, &format, args...)
 }
 
 // Warning logs a message using WARNING as log level.
-func (l *Logger) Warning(args ...interface{}) {
+func (l *Logger) Warning(args ...any) {
 	l.log(WARNING, nil, args...)
 }
 
 // Warningf logs a message using WARNING as log level.
-func (l *Logger) Warningf(format string, args ...interface{}) {
+func (l *Logger) Warningf(format string, args ...any) {
 	l.log(WARNING, &format, args...)
 }
 
 // Notice logs a message using NOTICE as log level.
-func (l *Logger) Notice(args ...interface{}) {
+func (l *Logger) Notice(args ...any) {
 	l.log(NOTICE, nil, args...)
 }
 
 // Noticef logs a message using NOTICE as log level.
-func (l *Logger) Noticef(format string, args ...interface{}) {
+func (l *Logger) Noticef(format string, args ...any) {
 	l.log(NOTICE, &format, args...)
 }
 
 // Info logs a message using INFO as log level.
-func (l *Logger) Info(args ...interface{}) {
+func (l *Logger) Info(args ...any) {
 	l.log(INFO, nil, args...)
 }
 
 // Infof logs a message using INFO as log level.
-func (l *Logger) Infof(format string, args ...interface{}) {
+func (l *Logger) Infof(format string, args ...any) {
 	l.log(INFO, &format, args...)
 }
 
 // Debug logs a message using DEBUG as log level.
-func (l *Logger) Debug(args ...interface{}) {
+func (l *Logger) Debug(args ...any) {
 	l.log(DEBUG, nil, args...)
 }
 
 // Debugf logs a message using DEBUG as log level.
-func (l *Logger) Debugf(format string, args ...interface{}) {
+func (l *Logger) Debugf(format string, args ...any) {
 	l.log(DEBUG, &format, args...)
 }
 
