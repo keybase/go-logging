@@ -12,7 +12,7 @@ import (
 // TODO share more code between these tests
 func MemoryRecordN(b *MemoryBackend, n int) *Record {
 	node := b.Head()
-	for i := 0; i < n; i++ {
+	for range n {
 		if node == nil {
 			break
 		}
@@ -27,7 +27,7 @@ func MemoryRecordN(b *MemoryBackend, n int) *Record {
 func ChannelMemoryRecordN(b *ChannelMemoryBackend, n int) *Record {
 	b.Flush()
 	node := b.Head()
-	for i := 0; i < n; i++ {
+	for range n {
 		if node == nil {
 			break
 		}
@@ -50,7 +50,7 @@ func TestMemoryBackend(t *testing.T) {
 	}
 
 	// Run 13 times, the resulting vector should be [5..12]
-	for i := 0; i < 13; i++ {
+	for i := range 13 {
 		log.Infof("%d", i)
 	}
 
@@ -61,7 +61,7 @@ func TestMemoryBackend(t *testing.T) {
 	if record.Formatted(0) != "5" {
 		t.Errorf("unexpected start: %s", record.Formatted(0))
 	}
-	for i := 0; i < 8; i++ {
+	for i := range 8 {
 		record = MemoryRecordN(backend, i)
 		if strconv.Itoa(i+5) != record.Formatted(0) {
 			t.Errorf("unexpected record: %v", record.Formatted(0))
@@ -88,7 +88,7 @@ func TestChannelMemoryBackend(t *testing.T) {
 	}
 
 	// Run 13 times, the resulting vector should be [5..12]
-	for i := 0; i < 13; i++ {
+	for i := range 13 {
 		log.Infof("%d", i)
 	}
 	backend.Flush()
@@ -100,7 +100,7 @@ func TestChannelMemoryBackend(t *testing.T) {
 	if record.Formatted(0) != "5" {
 		t.Errorf("unexpected start: %s", record.Formatted(0))
 	}
-	for i := 0; i < 8; i++ {
+	for i := range 8 {
 		record = ChannelMemoryRecordN(backend, i)
 		if strconv.Itoa(i+5) != record.Formatted(0) {
 			t.Errorf("unexpected record: %v", record.Formatted(0))

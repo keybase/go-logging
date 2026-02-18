@@ -19,7 +19,7 @@ var format = logging.MustStringFormatter(
 // time this is logged, the Redacted() function will be called.
 type Password string
 
-func (p Password) Redacted() interface{} {
+func (p Password) Redacted() any {
 	return logging.Redact(string(p))
 }
 

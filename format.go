@@ -249,7 +249,7 @@ func NewStringFormatter(format string) (Formatter, error) {
 		ID:     12345,
 		Time:   t,
 		Module: "logger",
-		Args:   []interface{}{"go"},
+		Args:   []any{"go"},
 		fmt:    &testFmt,
 	}
 	if err := fmter.Format(0, r, &bytes.Buffer{}); err != nil {
@@ -289,7 +289,7 @@ func (f *stringFormatter) Format(calldepth int, r *Record, output io.Writer) (er
 			}
 			_, _ = output.Write([]byte(formatCallpath(calldepth+1, depth)))
 		default:
-			var v interface{}
+			var v any
 			switch part.verb {
 			case fmtVerbLevel:
 				v = r.Level
@@ -360,7 +360,7 @@ func formatFuncName(v fmtVerb, f string) string {
 }
 
 func formatCallpath(calldepth int, depth int) string {
-	v := ""
+	var v strings.Builder
 	callers := make([]uintptr, 64)
 	n := runtime.Callers(calldepth+2, callers)
 	oldPc := callers[n-1]
@@ -368,7 +368,7 @@ func formatCallpath(calldepth int, depth int) string {
 	start := n - 3
 	if depth > 0 && start >= depth {
 		start = depth - 1
-		v += "~."
+		v.WriteString("~.")
 	}
 	recursiveCall := false
 	for i := start; i >= 0; i-- {
@@ -380,16 +380,16 @@ func formatCallpath(calldepth int, depth int) string {
 		oldPc = pc
 		if recursiveCall {
 			recursiveCall = false
-			v += ".."
+			v.WriteString("..")
 		}
 		if i < start {
-			v += "."
+			v.WriteString(".")
 		}
 		if f := runtime.FuncForPC(pc); f != nil {
-			v += formatFuncName(fmtVerbShortfunc, f.Name())
+			v.WriteString(formatFuncName(fmtVerbShortfunc, f.Name()))
 		}
 	}
-	return v
+	return v.String()
 }
 
 // backendFormatter combines a backend with a specific formatter making it
