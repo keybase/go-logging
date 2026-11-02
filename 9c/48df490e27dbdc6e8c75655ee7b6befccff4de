@@ -1,0 +1,19 @@
+.github/workflows/ci.yml
+  s_d2d1194684ea56::t_e0565cf216a140 42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "9c48df490e27dbdc6e8c75655ee7b6befccff4de",
+  "prompts": {},
+  "sessions": {
+    "s_d2d1194684ea56": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "s_d2d1194684ea56",
+        "model": "unknown"
+      },
+      "human_author": "Joshua Blum <joshua.blum@zoom.us>"
+    }
+  }
+}
